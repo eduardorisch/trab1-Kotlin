@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import eduardorisch.com.github.trabKotlin1.screens.LoginScreen
 import eduardorisch.com.github.trabKotlin1.screens.MenuScreen
 import eduardorisch.com.github.trabKotlin1.screens.PedidosScreen
@@ -39,11 +41,20 @@ class MainActivity : ComponentActivity() {
                         composable(route = "menu"){
                             MenuScreen(modifier = Modifier.padding(innerPadding), navController)
                         }
-                        composable(route = "pedidos"){
-                            PedidosScreen(modifier = Modifier.padding(innerPadding), navController)
+                        composable(route = "pedidos?cliente={cliente}",
+                            arguments = listOf(navArgument("cliente"){
+                                defaultValue = "cliente genérico" })
+                        ){
+                            PedidosScreen(modifier = Modifier.padding(innerPadding), navController,
+                                it.arguments?.getString("cliente"))
                         }
-                        composable(route = "perfil"){
-                            PerfilScreen(modifier = Modifier.padding(innerPadding), navController)
+                        composable(route = "perfil/{nome}/{idade}", arguments = listOf(
+                            navArgument("nome"){ type = NavType.StringType},
+                            navArgument("idade"){ type = NavType.IntType}
+                        )){
+                            val nome: String? = it.arguments?.getString("nome", "Usuario generico")
+                            val idade: Int? = it.arguments?.getInt("idade", 0)
+                            PerfilScreen(modifier = Modifier.padding(innerPadding), navController, nome!!, idade!!)
                         }
                     }
                 }
